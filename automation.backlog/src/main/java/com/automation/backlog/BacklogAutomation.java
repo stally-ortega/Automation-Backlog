@@ -3,106 +3,79 @@ package com.automation.backlog;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.boot.test.context.SpringBootTest;
 
+public class BacklogAutomation {
+	private String url;
+	private String  srcIframe;
+	private String  user;
+	private String  passw;
+	private String  fechaInicio;
+	private String  fechaFin;
+    private List<String> servicios;
+    private List<String[]> backlog;
+    private WebDriver driver;
+    private int waitSeconds;
 
-@SpringBootTest
-class ApplicationTests {
-	
-	String url, user, passw, srcIframe, fechaInicio, fechaFin;
-	String[] servicios;
-	List<String[]> backlog;
-	WebDriver driver;
-	int waitSeconds;
-	
-	@BeforeEach
-	void getUp() {
-		// Desactiva los logs de Selenium
-		Logger seleniumLogger = Logger.getLogger("org.openqa.selenium");
-	    seleniumLogger.setLevel(Level.SEVERE);
-	    for (Handler handler : seleniumLogger.getHandlers()) {
-	        handler.setLevel(Level.SEVERE);
-	    }
-	    Logger.getLogger("java.lang.Runtime").setLevel(Level.SEVERE);
-	    Logger.getLogger("java.lang.ProcessBuilder").setLevel(Level.OFF);
-		
-		
-		// VARIABLES DE LA APLICACION
-		waitSeconds = 10;
-		backlog = new ArrayList<String[]>();
-		backlog.add(new String[] {"N° incidente", "Dia afectado", "Analista afectado", "Fecha ult. nota", "Ult. nota"});
-		
-		url = "";
-		user = "";	
-		passw = "";
-		
-		fechaInicio = "";
-		fechaFin = "";
-		servicios = new String[]{};
-		
-		// FORMULA PARA EXCEL
-		// =TEXTJOIN(",", TRUE, "\"" & A1:A5 & "\"")
-		// =UNIRCADENAS(","; VERDADERO; """" & A2:A93 & """")
-		
-		driver = new ChromeDriver();
-		driver.get(url);
-	}
-
-	@Test
-	void contextLoads() {
-		
-		System.out.println("-------------------------------");
+    public BacklogAutomation(WebDriver driver, Config config) {
+        this.driver = driver;
+        this.url = config.url;
+        this.user = config.user;
+        this.passw = config.passw;
+        this.fechaInicio = config.fechaInicio;
+        this.fechaFin = config.fechaFin;
+        this.servicios = config.servicios;
+        this.srcIframe = "";
+        this.waitSeconds = 10;
+        this.backlog = new ArrayList<>();
+        backlog.add(new String[]{"N° incidente", "Dia afectado", "Analista afectado", "Fecha ult. nota", "Ult. nota"});
+    }
+    
+    public void run() {
+        System.out.println("-------------------------------");
         System.out.println("      INICIANDO AUTOMATIZACIÓN     ");
-        System.out.println("-------------------------------");
-		System.out.println("\n\n");
-		
-		// Iniciamos sesion
-		driver.findElement(By.id("LoginUsername")).sendKeys(user);
-		driver.findElement(By.id("LoginPassword")).sendKeys(passw);
-		driver.findElement(By.id("loginBtn")).click();
-		
-		if(servicios.length > 0 && servicios[0].startsWith("IN")) {
-			this.revisarIncidentes();		// Si los servicios a revisar no son IN
-		}
-		else if(servicios.length > 0 && servicios[0].startsWith("PT")) {
-			this.revisarPeticiones();		// Si los servicios a revisar no son PT
-		}
-		else {
-			System.out.println(new Error("No hay servicios para revisar"));
-			return;
-		}
-		
-		// mostrar los resultados
-		System.out.println("\n\n");
-		
-		backlog.forEach(arr -> {
-			for(String r : arr) {
-	            System.out.print(r + "|");
-	        }
-			System.out.print("\n");
-		});
-		
-		System.out.println("\n\n");
-        System.out.println("-------------------------------");
+        System.out.println("-------------------------------\n\n");
+        
+        // Abrimos la pagina
+        driver.get(url);
+
+        // Iniciamos sesion
+ 		driver.findElement(By.id("LoginUsername")).sendKeys(user);
+ 		driver.findElement(By.id("LoginPassword")).sendKeys(passw);
+ 		driver.findElement(By.id("loginBtn")).click();
+ 		
+ 		if(!servicios.isEmpty() && servicios.get(0).startsWith("IN")) {
+ 			this.revisarIncidentes();		// Si los servicios a revisar no son IN
+ 		}
+ 		else if(!servicios.isEmpty() && servicios.get(0).startsWith("PT")) {
+ 			this.revisarPeticiones();		// Si los servicios a revisar no son PT
+ 		}
+ 		else {
+ 			System.out.println(new Error("No hay servicios para revisar"));
+ 			return;
+ 		}
+ 		
+ 		// mostrar los resultados
+        System.out.println("\n\n");
+        backlog.forEach(arr -> {
+            for (String r : arr) {
+                System.out.print(r + "|");
+            }
+            System.out.print("\n");
+        });
+
+        System.out.println("\n\n-------------------------------");
         System.out.println("     AUTOMATIZACIÓN FINALIZADA OK     ");
-        System.out.println("-------------------------------");
-		System.out.println("\n\n");
-	}
-	
-	private void revisarIncidentes() {
+        System.out.println("-------------------------------\n\n");
+    }
+    
+    private void revisarIncidentes() {
 		this.srcIframe = "/especialistas/cwc/nav.menu?name=navStart&id=ROOT%2FGesti%C3%B3n%20de%20incidentes%2FCola%20de%20incidentes";
 		
 		// Esperamos a que cargue la pagina	
@@ -208,4 +181,5 @@ class ApplicationTests {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(this.waitSeconds));
 		return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
 	}
+
 }
