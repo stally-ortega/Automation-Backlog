@@ -1,6 +1,6 @@
 <div align="center">
 
-🤖 Herramienta de Revisión de Backlog 🤖
+🤖 Herramienta de Revisión de Backlog 🤖 <br>
 ¡Automatiza la auditoría de tus tickets y recupera tu tiempo!
 
 </div>
@@ -9,9 +9,9 @@
 
 </div>
 
-Esta herramienta de escritorio, desarrollada en Java, se encarga de la tediosa tarea de revisar el historial de tus servicios (incidentes o peticiones). Se conecta a tu plataforma, analiza las actividades y genera un informe en Excel (.xlsx) que resalta los días sin gestión y al último analista responsable.
+Esta herramienta de escritorio, desarrollada en Java, se encarga de la tediosa tarea de revisar el historial de tus servicios (incidentes o peticiones). Se conecta a tu plataforma, analiza las actividades y genera un informe en Excel (.xlsx) que resalta los días sin gestión y al último analista responsable. <br>
 
-✨ Características Principales
+✨ Características Principales <br>
 🖥️ Menú Interactivo en Consola: Una interfaz sencilla y fácil de usar para cualquier usuario.
 
 ⚙️ Configuración Flexible: Gestiona tus credenciales y listas de servicios a través de un archivo config.json externo.
@@ -40,7 +40,7 @@ Esta herramienta de escritorio, desarrollada en Java, se encarga de la tediosa t
 | Java | Spring Boot | Selenium | Apache POI |
 |------|-------------|----------|------------|
 | <img src="https://img.icons8.com/color/48/000000/java-coffee-cup-logo.png" alt="Logo de Java"/> | <img src="https://img.icons8.com/color/48/000000/spring-logo.png" alt="Logo de Spring Boot"/> | <img src="https://img.icons8.com/color/48/000000/selenium-test-automation.png" alt="Logo de Selenium"/> | <img src="https://img.icons8.com/color/48/000000/ms-excel.png" alt="Logo de Apache POI"/> |
-
+<br>
 🚀 Guía de Inicio Rápido
 ¡Empezar es muy fácil! Sigue estos 5 pasos:
 
@@ -49,7 +49,7 @@ Requisitos: Asegúrate de tener Java 17 o una versión superior instalada en tu 
 Descargar: Ve a la sección de Releases de este repositorio y descarga el último archivo .jar.
 
 Ejecutar: Haz doble clic en el archivo .jar para abrir el menú en la consola.
-
+<br>
 # O ejecútalo desde la terminal
 java -jar nombre-del-archivo.jar
 
@@ -59,13 +59,7 @@ Obtener Configuración: Usa la Opción 2 del menú para descargar la plantilla c
 
 📖 Documentación Completa
 Para una guía detallada sobre cada paso, configuración y solución de problemas, consulta el manual de usuario completo.
-
 ➡️ Leer el MANUAL_DE_USO.md
-
-🤝 ¿Quieres Contribuir?
-¡Las contribuciones son bienvenidas! Si tienes ideas para mejorar la herramienta o encuentras un error, no dudes en abrir un "Issue" o enviar un "Pull Request".
-
-➡️ Guía para Contribuidores (CONTRIBUTING.md)
 
 ⚖️ Licencia y Descargo de Responsabilidad
 Este proyecto se distribuye bajo la Licencia MIT. Para más detalles, consulta el archivo LICENSE.
