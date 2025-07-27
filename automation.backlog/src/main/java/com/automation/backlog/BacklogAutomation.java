@@ -1,8 +1,15 @@
 package com.automation.backlog;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.File;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -22,8 +29,9 @@ public class BacklogAutomation {
     private List<String[]> backlog;
     private WebDriver driver;
     private int waitSeconds;
+    private String jsonFilePath;
 
-    public BacklogAutomation(WebDriver driver, Config config) {
+    public BacklogAutomation(WebDriver driver, Config config, String jsonPath) {
         this.driver = driver;
         this.url = config.url;
         this.user = config.user;
@@ -34,7 +42,7 @@ public class BacklogAutomation {
         this.srcIframe = "";
         this.waitSeconds = 10;
         this.backlog = new ArrayList<>();
-        backlog.add(new String[]{"N° incidente", "Dia afectado", "Analista afectado", "Fecha ult. nota", "Ult. nota"});
+        this.jsonFilePath = jsonPath;
     }
     
     public void run() {
@@ -61,18 +69,18 @@ public class BacklogAutomation {
  			return;
  		}
  		
- 		// mostrar los resultados
-        System.out.println("\n\n");
-        backlog.forEach(arr -> {
-            for (String r : arr) {
-                System.out.print(r + "|");
-            }
-            System.out.print("\n");
-        });
-
-        System.out.println("\n\n-------------------------------");
-        System.out.println("     AUTOMATIZACIÓN FINALIZADA OK     ");
-        System.out.println("-------------------------------\n\n");
+ 		// exportamos los resultados
+ 		try {
+            escribirResultadosEnExcel();
+            System.out.println("\n\n-------------------------------");
+            System.out.println("   AUTOMATIZACIÓN FINALIZADA OK    ");
+            System.out.println("   Resultados guardados en: '" + jsonFilePath + "'   ");
+            System.out.println("   Nombre del archivo: 'resultado_backlog.xlsx'   ");
+            System.out.println("-------------------------------\n\n");
+        } catch (IOException e) {
+            System.err.println("Error al escribir el archivo Excel.");
+            e.printStackTrace();
+        }
     }
     
     private void revisarIncidentes() {
@@ -181,5 +189,55 @@ public class BacklogAutomation {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(this.waitSeconds));
 		return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
 	}
+	
+	private void escribirResultadosEnExcel() throws IOException {
+        // Obtener la ruta de salida, cambiando la extensión a .xlsx
+        File jsonFile = new File(this.jsonFilePath);
+        String parentDirectory = jsonFile.getParent();
+        String excelOutputFile = Paths.get(parentDirectory, "resultado_backlog.xlsx").toString();
+
+        // try-with-resources para asegurar que todo se cierre
+        try (
+			// Crea un nuevo libro de Excel
+            Workbook workbook = new XSSFWorkbook();
+    		// Crea un flujo de salida
+            FileOutputStream fileOut = new FileOutputStream(excelOutputFile)
+        ) {
+			// Crea una nueva hoja
+            Sheet sheet = workbook.createSheet("Backlog");
+
+            // Estilos de la cabecera
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            CellStyle headerCellStyle = workbook.createCellStyle();
+            headerCellStyle.setFont(headerFont);
+
+            // Crear la fila de la cabecera (Los nombres de columnas)
+            String[] headers = {"N° incidente", "Dia afectado", "Analista afectado", "Fecha ult. nota", "Ult. nota"};
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerCellStyle);
+            }
+
+            // Escribir las filas de datos
+            int rowNum = 1;
+            for (String[] record : this.backlog) {
+                Row row = sheet.createRow(rowNum++);
+                for (int i = 0; i < record.length; i++) {
+                    row.createCell(i).setCellValue(record[i]);
+                }
+            }
+
+            // Ajustar el ancho de las columnas automáticamente
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            // Escribir el libro de Excel al archivo
+            workbook.write(fileOut);
+        }
+    }
 
 }

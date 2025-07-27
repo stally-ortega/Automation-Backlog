@@ -60,7 +60,7 @@ public class Application implements CommandLineRunner {
 
             // Inicia el WebDriver con las opciones configuradas
             System.out.println("Paso 4: Ejecutando la automatización principal...");
-            BacklogAutomation automation = new BacklogAutomation(driver, config);
+            BacklogAutomation automation = new BacklogAutomation(driver, config, args[0]);
             automation.run();
             System.out.println("Paso 4: ¡Automatización completada!");
         } catch (Throwable t) {
