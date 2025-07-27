@@ -37,21 +37,12 @@ Esta herramienta de escritorio, desarrollada en Java, se encarga de la tediosa t
 </table>
 
 🛠️ Tecnologías Utilizadas
-Java
-
-Spring Boot
-
-Selenium
-
-Apache POI
-
-<img src="https://img.icons8.com/color/48/000000/java-coffee-cup-logo.png" alt="Logo de Java"/>
-
-<img src="https://img.icons8.com/color/48/000000/spring-logo.png" alt="Logo de Spring Boot"/>
-
-<img src="https://img.icons8.com/color/48/000000/selenium-test-automation.png" alt="Logo de Selenium"/>
-
-<img src="https://img.icons8.com/color/48/000000/ms-excel.png" alt="Logo de Apache POI"/>
+| Java | Spring Boot | Selenium | Apache POI |
+|------|-------------|----------|------------|
+| <img src="https://img.icons8.com/color/48/000000/java-coffee-cup-logo.png" alt="Logo de Java"/> | 
+<img src="https://img.icons8.com/color/48/000000/spring-logo.png" alt="Logo de Spring Boot"/> | 
+<img src="https://img.icons8.com/color/48/000000/selenium-test-automation.png" alt="Logo de Selenium"/> | 
+<img src="https://img.icons8.com/color/48/000000/ms-excel.png" alt="Logo de Apache POI"/> |
 
 🚀 Guía de Inicio Rápido
 ¡Empezar es muy fácil! Sigue estos 5 pasos:
