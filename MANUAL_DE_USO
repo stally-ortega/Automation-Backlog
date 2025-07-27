@@ -1,0 +1,139 @@
+Manual de Usuario: Herramienta de Revisión de Backlog
+1. Introducción: ¿Qué hace esta aplicación? (Leer primero)
+¡Bienvenido a la Herramienta de Revisión de Backlog!
+
+El objetivo principal de esta aplicación es ahorrarte tiempo automatizando una tarea repetitiva y crucial: auditar el seguimiento de servicios (incidentes o peticiones).
+
+En lugar de revisar manualmente cada servicio para ver si ha sido gestionado diariamente, esta herramienta lo hace por ti. Se conecta a la plataforma, busca cada servicio que le indiques y analiza su historial de actividades para encontrar días en los que no se realizó ninguna gestión. Al final, te entrega un informe claro en un archivo Excel (.xlsx), destacando los servicios desatendidos y el último analista responsable.
+
+Nota Importante Antes de Empezar:
+
+Esta es una herramienta creada para ser útil y eficiente. Sin embargo, su uso implica una interacción automatizada con sistemas web, lo cual conlleva responsabilidades.
+
+Antes de utilizar la aplicación, es fundamental que leas la Sección 6: Agradecimientos y Descargo de Responsabilidad al final de este manual. Al hacer uso de este software, aceptas los términos y condiciones descritos en dicha sección.
+
+2. Requisitos Previos
+Para que la aplicación funcione en cualquier computadora, solo necesitas dos cosas:
+
+Tener Java instalado: La aplicación está construida en Java versión 17. Si no lo tienes, puedes descargarlo gratuitamente desde la página oficial de Java.
+
+Tener Chrome instalado: La aplicación se ejecuta en el navegador de Google Chrome. Si no lo tienes, puedes descargarlo gratuitamente desde la página oficial de Chrome.
+
+La herramienta se encarga de todo lo demás, incluyendo la gestión del navegador Chrome.
+
+3. Guía de Uso Paso a Paso
+Sigue estos pasos para utilizar la aplicación desde cero.
+
+Paso 3.1: Ejecutar la aplicación por primera vez
+La aplicación es un único archivo ejecutable .jar.
+
+Coloca el archivo .jar en una carpeta de fácil acceso (por ejemplo, en tu Escritorio).
+
+Haz doble clic sobre el archivo .jar. Si no funciona, haz clic derecho sobre él, selecciona "Abrir con" y elige "Java(TM) Platform SE binary".
+
+Se abrirá una ventana de consola (una pantalla negra con texto) que mostrará el menú principal.
+
+Paso 3.2: Obtener el archivo de configuración (¡El paso más importante!)
+Antes de poder revisar cualquier servicio, necesitas un archivo de configuración. La aplicación te proporcionará una plantilla base.
+
+En el menú principal, escribe el número 2 y presiona Enter para elegir la opción "Descargar plantilla de configuración".
+
+La consola te pedirá que le indiques dónde quieres guardar el archivo. Debes escribir la ruta completa de la carpeta.
+
+Ejemplo: C:\Users\TuUsuario\Desktop
+
+Consejo: Puedes utilizar la misma carpeta donde se encuentra el ejecutable y guardar ahí la plantilla.
+
+Presiona Enter. La aplicación confirmará que el archivo config.json se ha guardado en la ubicación que especificaste.
+
+Paso 3.3: Configurar tu archivo config.json
+Ahora, ve a la carpeta donde guardaste el archivo config.json y ábrelo con un editor de texto simple (como el Bloc de Notas de Windows). Verás una estructura como esta:
+
+{
+  "url": "URL_DEL_SITIO_WEB_AQUI",
+  "user": "TU_USUARIO_AQUI",
+  "passw": "TU_CONTRASEÑA_AQUI",
+  "fechaInicio": "dd/MM/yy",
+  "fechaFin": "dd/MM/yy",
+  "servicios": [ "PTxxxxx", "PTxxxxx", "PTxxxxx"]
+}
+
+Debes reemplazar los textos de ejemplo por tu información real:
+
+"url": Pega la URL completa de la página de inicio de sesión de la plataforma.
+
+"user": Escribe tu nombre de usuario para iniciar sesión.
+
+"passw": Escribe tu contraseña.
+
+"fechaInicio": La fecha desde la que quieres empezar a revisar, en formato día/mes/año (ej: 01/07/24).
+
+"fechaFin": La fecha hasta la que quieres revisar (ej: 25/07/24).
+
+"servicios": Esta es la lista de todos los servicios que quieres revisar. Debes escribirlos entre comillas y separados por comas. Importante: Solo deben ser de un mismo tipo ("IN" o "PT"), no se pueden mezclar en una misma ejecución.
+
+¡Guarda los cambios en el archivo cuando termines!
+
+Paso 3.4: Ejecutar la Revisión del Backlog
+Con tu archivo config.json listo y guardado, ya puedes realizar la revisión.
+
+Vuelve a la consola de la aplicación (si la cerraste, ejecuta el .jar de nuevo).
+
+Escribe el número 1 y presiona Enter para elegir "Revisar backlog".
+
+La consola te pedirá la ruta de tu archivo config.json. Escribe la ruta completa donde lo guardaste.
+
+Consejo: En Windows, puedes arrastrar el archivo config.json directamente a la ventana de la consola y la ruta se pegará automáticamente.
+
+Presiona Enter.
+
+¡Y listo! La aplicación comenzará a trabajar. Verás cómo se abre una ventana del navegador Chrome que empezará a iniciar sesión y a buscar cada servicio de tu lista. ¡No cierres esa ventana! La aplicación la controla.
+
+4. Entendiendo los Resultados
+Una vez finalizada la automatización, la aplicación genera un archivo Excel (.xlsx) llamado resultado_backlog.xlsx. Este archivo se guardará en la misma carpeta donde tienes tu config.json.
+
+Al abrir el archivo Excel, verás una tabla con las siguientes columnas:
+
+N° servicio: El identificador del servicio que se analizó.
+
+Dia afectado: La fecha específica en la que no se encontró ninguna gestión para ese servicio. Si esta columna está vacía, significa que el servicio tuvo gestión todos los días.
+
+Analista afectado: El nombre del último usuario que realizó una gestión antes del día sin actividad.
+
+Fecha ult. nota: La fecha y hora exactas de la última nota registrada en el servicio.
+
+Ult. nota: El contenido de esa última nota.
+
+5. Menú de Opciones
+Para resumir, estas son las opciones que encontrarás en el menú principal:
+
+Opción 1: Revisar backlog: Inicia la automatización. Necesita un archivo config.json ya configurado.
+
+Opción 2: Descargar plantilla de configuración: Crea un archivo config.json para que lo puedas configurar.
+
+Opción 3: Descargar manual de usuario: Guarda una copia de este manual en tu computadora.
+
+Opción 4: Salir: Cierra la aplicación.
+
+6. Agradecimientos y Descargo de Responsabilidad
+Agradecimientos
+Gracias por utilizar esta herramienta. Su desarrollo fue un proyecto enteramente personal, motivado por el deseo de optimizar procesos y compartir una solución que pudiera ser útil para otros. Es importante aclarar que esta aplicación fue creada fuera de cualquier responsabilidad u horario laboral y no tiene ninguna afiliación ni representa a ninguna empresa. Su propósito es puramente colaborativo y de aprendizaje.
+
+Licencia y Costo
+Esta herramienta es completamente gratuita y de código abierto (open source). Puedes usarla, modificarla y distribuirla libremente, siempre en el espíritu de la colaboración y el uso ético de la tecnología.
+
+Código Fuente
+El código fuente completo de este proyecto está disponible para su consulta, modificación y mejora en el siguiente repositorio de GitHub. Se agradecen las contribuciones y sugerencias.
+
+Repositorio oficial: https://github.com/stally-ortega/Automation-Backlog
+
+Descargo de Responsabilidad y Uso Correcto
+Para evitar malentendidos y proteger tanto al usuario como al desarrollador, por favor ten en cuenta lo siguiente:
+
+Uso bajo tu responsabilidad: El uso de esta aplicación es bajo tu entera y exclusiva responsabilidad. Eres responsable de cumplir con los términos de servicio de cualquier plataforma con la que interactúes a través de esta herramienta.
+
+Seguridad de las credenciales: El archivo config.json contiene información sensible (usuario, contraseña). Es tu responsabilidad mantener este archivo en un lugar seguro y no compartirlo. La aplicación procesa estos datos de forma local y no los envía a ningún servidor externo.
+
+Software "tal cual": La aplicación se proporciona "tal cual", sin garantías de ningún tipo, ya sean expresas o implícitas. No se garantiza que funcione sin errores o de manera ininterrumpida.
+
+Limitación de responsabilidad: El desarrollador no se hace responsable de ningún tipo de daño, ya sea directo o indirecto, que pueda surgir del uso o de la imposibilidad de uso de este software. Esto incluye, entre otros, la pérdida de datos, el bloqueo de cuentas, penalizaciones por exceso de peticiones (crawling) o cualquier otra consecuencia negativa.
