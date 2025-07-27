@@ -45,10 +45,7 @@ public class BacklogAutomation {
         this.jsonFilePath = jsonPath;
     }
     
-    public void run() {
-        System.out.println("-------------------------------");
-        System.out.println("      INICIANDO AUTOMATIZACIÓN     ");
-        System.out.println("-------------------------------\n\n");
+    public String run() {
         
         // Abrimos la pagina
         driver.get(url);
@@ -66,20 +63,39 @@ public class BacklogAutomation {
  		}
  		else {
  			System.out.println(new Error("No hay servicios para revisar"));
- 			return;
+ 			return """
+
+ 			        -------------------------------
+ 			           AUTOMATIZACIÓN FINALIZADA ERROR    
+ 			           Configuración de servicios incorrecta. Revise el archivo de extensión .json   
+ 			        -------------------------------
+
+ 			        """;
  		}
  		
  		// exportamos los resultados
  		try {
             escribirResultadosEnExcel();
-            System.out.println("\n\n-------------------------------");
-            System.out.println("   AUTOMATIZACIÓN FINALIZADA OK    ");
-            System.out.println("   Resultados guardados en: '" + jsonFilePath + "'   ");
-            System.out.println("   Nombre del archivo: 'resultado_backlog.xlsx'   ");
-            System.out.println("-------------------------------\n\n");
+            return """
+
+                    -------------------------------
+                       AUTOMATIZACIÓN FINALIZADA OK    
+                       Resultados guardados en: '%s'   
+                       Nombre del archivo: 'resultado_backlog.xlsx'   
+                    -------------------------------
+
+                    """.formatted(jsonFilePath);
         } catch (IOException e) {
             System.err.println("Error al escribir el archivo Excel.");
             e.printStackTrace();
+            return """
+            	       
+                    -------------------------------
+                       AUTOMATIZACIÓN FINALIZADA ERROR    
+                       No se pudo escribir el archivo Excel. Consulte con el desarrollador   
+                    -------------------------------
+
+                    """;
         }
     }
     
@@ -133,8 +149,8 @@ public class BacklogAutomation {
 			}		
 		}
 	}
-	
-	private void revisarPeticiones() {
+    
+    private void revisarPeticiones() {
 		this.srcIframe = "/especialistas/cwc/nav.menu?name=navStart&id=ROOT%2FGesti%C3%B3n%20de%20Peticiones%2FCola%20de%20peticiones";
 		
 		// Esperamos a que cargue la pagina
@@ -195,6 +211,7 @@ public class BacklogAutomation {
         File jsonFile = new File(this.jsonFilePath);
         String parentDirectory = jsonFile.getParent();
         String excelOutputFile = Paths.get(parentDirectory, "resultado_backlog.xlsx").toString();
+        this.jsonFilePath = parentDirectory;
 
         // try-with-resources para asegurar que todo se cierre
         try (

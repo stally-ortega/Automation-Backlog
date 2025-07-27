@@ -1,0 +1,8 @@
+{
+  "url": "https://mesadeservicio.efecty.com.co/especialistas/index.do?telephonyuser=1&lang=",
+  "user": "TU_USUARIO_AQUI",
+  "passw": "TU_CONTRASEÑA_AQUI",
+  "fechaInicio": "dd/MM/yy",
+  "fechaFin": "dd/MM/yy",
+  "servicios": [ "PT12345", "PT67890" ]
+}
