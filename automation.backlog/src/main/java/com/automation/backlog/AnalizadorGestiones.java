@@ -8,6 +8,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Clase encargada de analizar las actividades de un servicio en función del texto cargado desde el sistema.
+ * 
+ * Extrae gestiones con sus fechas, autores y notas, identifica días sin actividad (backlog) y
+ * genera un resumen estructurado por servicio para su posterior exportación.
+ * 
+ * <p>Formato esperado para las entradas en el texto:
+ * <pre>
+ * 12/07/25 14:30:00 Nombre Apellido (Usuario): Nota de gestión...
+ * </pre>
+ * 
+ * <p>Las fechas de inicio y fin definen el rango que será analizado, y las entradas fuera de este
+ * intervalo serán ignoradas.
+ */
 public class AnalizadorGestiones {
 	
 	private static final Pattern ENTRADA_PATTERN = Pattern.compile(
@@ -22,7 +36,14 @@ public class AnalizadorGestiones {
     
     private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
     private final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yy");
-
+    
+    /**
+     * Constructor que recibe el texto a analizar y las fechas que delimitan el rango de revisión.
+     *
+     * @param texto Texto completo con las actividades del servicio.
+     * @param fechaI Fecha de inicio del análisis (formato "dd/MM/yy").
+     * @param fechaF Fecha de fin del análisis (formato "dd/MM/yy").
+     */
     public AnalizadorGestiones(String texto, String fechaI, String fechaF) {
 
         // Definir rango de fechas a analizar
@@ -32,6 +53,13 @@ public class AnalizadorGestiones {
         this.fechaPrimeraGestion = LocalDate.parse(fechaI, DATE_FORMATTER);
     }
     
+    /**
+     * Revisa las gestiones del texto y devuelve los días con backlog o el último día gestionado si no hubo backlog.
+     *
+     * @param servicio El identificador del servicio (ej. "IN-123", "PT-456").
+     * @return Lista de arreglos de String con los siguientes campos por fila:
+     *         [número de servicio, día afectado, autor, fecha de última nota, contenido de la última nota].
+     */
     public List<String[]> revisarBacklog(String servicio) {
         List<Gestion> gestiones = parsearGestiones(texto);
         Gestion ultimaGestion = obtenerUltimaGestion(gestiones);
@@ -79,6 +107,12 @@ public class AnalizadorGestiones {
         return resultado;
     }
     
+    /**
+     * Parsea el texto de entrada para extraer gestiones con fecha, autor y nota.
+     *
+     * @param texto Texto crudo a analizar.
+     * @return Lista ordenada cronológicamente de objetos Gestion.
+     */
     private List<Gestion> parsearGestiones(String texto) {
         List<Gestion> gestiones = new ArrayList<>();
         Matcher matcher = ENTRADA_PATTERN.matcher(texto);
@@ -106,7 +140,12 @@ public class AnalizadorGestiones {
         return gestionesOrdenadas;
     }
     
-    
+    /**
+     * Obtiene la última gestión registrada para cada día dentro del rango especificado.
+     *
+     * @param gestiones Lista de gestiones parseadas.
+     * @return Mapa con fecha (día) como clave y la gestión más reciente de ese día como valor.
+     */
     private Map<LocalDate, Gestion> obtenerUltimaGestionPorDia(List<Gestion> gestiones) {
         Map<LocalDate, Gestion> ultimaPorDia = new TreeMap<>();
 
@@ -120,7 +159,15 @@ public class AnalizadorGestiones {
         return ultimaPorDia;
     }
     
-    
+    /**
+     * Encuentra días dentro del rango en los que no se realizó ninguna gestión.
+     * Para cada día sin gestión, intenta encontrar el autor de la gestión más reciente anterior.
+     *
+     * @param gestiones Lista completa de gestiones.
+     * @param inicio Fecha de inicio del rango.
+     * @param fin Fecha de fin del rango.
+     * @return Mapa con fecha como clave y el nombre del autor como valor.
+     */
     private Map<LocalDate, String> encontrarDiasSinGestion(List<Gestion> gestiones, LocalDate inicio, LocalDate fin) {
         Map<LocalDate, String> diasSinGestionConAutor = new TreeMap<>();
 
@@ -155,15 +202,37 @@ public class AnalizadorGestiones {
         return diasSinGestionConAutor;
     }
     
+    /**
+     * Obtiene la última gestión registrada en la lista.
+     *
+     * @param gestiones Lista de gestiones.
+     * @return La gestión más reciente.
+     */
     private Gestion obtenerUltimaGestion(List<Gestion> gestiones) {
         return gestiones.stream()
                 .max(Comparator.comparing(Gestion::getFechaHora))
                 .orElseThrow(() -> new RuntimeException("No hay gestiones registradas"));
     }
     
-    class Gestion {
+    
+    /**
+     * Clase interna que representa una gestión individual.
+     */
+    private static class Gestion {
+    	
+        /**
+         * Fecha y hora en que se registró la gestión.
+         */
         private final LocalDateTime fechaHora;
+
+        /**
+         * Autor o analista que realizó la gestión.
+         */
         private final String autor;
+
+        /**
+         * Nota de la gestión, ya procesada (sin saltos de línea).
+         */
         private final String nota;
         
         public Gestion(LocalDateTime fechaHora, String autor, String nota) {
@@ -187,8 +256,6 @@ public class AnalizadorGestiones {
 		@Override
 		public String toString() {
 			return "{fechaHora:" + fechaHora + ", autor:" + autor + ", nota:" + nota + "}";
-		}
-        
-        
+		} 
     }
 }

@@ -19,13 +19,43 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
+/**
+ * Aplicación principal de consola para automatizar la revisión de backlog usando Selenium WebDriver.
+ * 
+ * Esta clase implementa un menú interactivo en la línea de comandos que permite al usuario:
+ * <ul>
+ *     <li>Ejecutar la automatización utilizando un archivo de configuración JSON.</li>
+ *     <li>Descargar una plantilla de configuración predeterminada.</li>
+ *     <li>Descargar el manual de usuario.</li>
+ *     <li>Salir de la aplicación.</li>
+ * </ul>
+ * 
+ * El proyecto utiliza Spring Boot, Selenium, y Jackson para deserializar archivos JSON de configuración.
+ * 
+ * Ejecuta la automatización principal mediante la clase {@link BacklogAutomation}.
+ * 
+ */
 @SpringBootApplication
 public class Application implements CommandLineRunner {
-
+	
+	/**
+     * Método de entrada principal de la aplicación Spring Boot.
+     *
+     * @param args Argumentos de línea de comandos (no se utilizan directamente).
+     */
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
 	
+	/**
+     * Método ejecutado automáticamente al iniciar la aplicación.
+     * Despliega un menú interactivo para el usuario en consola.
+     * 
+     * Las opciones permiten ejecutar la automatización, descargar archivos, o salir.
+     *
+     * @param args Argumentos pasados al ejecutar la aplicación (no utilizados).
+     * @throws Exception Si ocurre algún error durante la ejecución.
+     */
 	@Override
 	public void run(String... args) throws Exception {
 		
@@ -39,8 +69,8 @@ public class Application implements CommandLineRunner {
             System.out.println("Por favor, elige una opción:");
             System.out.println("  1. Revisar backlog (usar un archivo config.json existente)");
             System.out.println("  2. Descargar plantilla de configuración (config.json)");
-            System.out.println("  2. Descargar el manual del usuario");
-            System.out.println("  3. Salir");
+            System.out.println("  3. Descargar el manual del usuario");
+            System.out.println("  4. Salir");
             System.out.print("Tu elección: ");
 
             String opcion = scanner.nextLine();
@@ -51,6 +81,7 @@ public class Application implements CommandLineRunner {
                     System.out.println("\nPor favor, arrastra o escribe la ruta completa de tu archivo 'config.json'");
                     System.out.print("Responda aquí: ");
                     templatePath = scanner.nextLine().trim();
+                    templatePath = templatePath.replaceAll("^\"|\"$", "");
                     executeAutomation(templatePath);
                     break;
                 case "2":
@@ -77,9 +108,13 @@ public class Application implements CommandLineRunner {
     }
 	
 	/**
-     * Contiene la lógica original para ejecutar la automatización de Selenium.
-     * @param jsonPath La ruta al archivo de configuración del usuario.
-     */
+	 * Ejecuta el proceso principal de automatización web con Selenium.
+	 * Lee la configuración desde el archivo JSON proporcionado, configura e inicia
+	 * el WebDriver, y llama a la clase BacklogAutomation para realizar el trabajo.
+	 *
+	 * @param jsonPath La ruta completa al archivo de configuración del usuario.
+	 * Debe ser un archivo .json válido y accesible.
+	 */
     private void executeAutomation(String jsonPath) {
     	// Verificamos que haya argumentos
         if (jsonPath.isBlank() || jsonPath.isEmpty()) {
@@ -149,8 +184,13 @@ public class Application implements CommandLineRunner {
     
     
     /**
-     * Lee la plantilla desde dentro del JAR y la guarda en la ruta especificada por el usuario.
-     * @param rutaDestino La ruta completa donde se guardará el archivo.
+     * Lee un archivo desde los recursos del JAR y la guarda
+     * en la ruta de destino especificada por el usuario.
+     *
+     * @param downloadPath La ruta completa del sistema de archivos donde se
+     * guardará el archivo.
+     * @throws IOException si ocurre un error al leer el archivo o escribir
+     * el nuevo archivo.
      */
     private void downloadFile(String downloadPath, String filename) {
         // Verificamos que la ruta tenga la terminación correcta
@@ -159,12 +199,12 @@ public class Application implements CommandLineRunner {
         }
         downloadPath = Paths.get(downloadPath, filename).toString();
         
-     // Traemos los datos del archivo ubicado en la ruta src/main/resources
+        // Traemos los datos del archivo ubicado en la ruta src/main/resources
         try (InputStream inputStream = Application.class.getResourceAsStream(filename);
              OutputStream outputStream = new FileOutputStream(downloadPath)) {
 
             if (inputStream == null) {
-                System.err.println("Error: No se pudo encontrar la plantilla '" + filename);
+                System.err.println("Error: No se pudo encontrar el archivo '" + filename);
                 return;
             }
 
@@ -175,10 +215,10 @@ public class Application implements CommandLineRunner {
                 outputStream.write(buffer, 0, length);
             }
 
-            System.out.println("\n✅ Plantilla descargada con éxito en: " + downloadPath);
+            System.out.println("\nArchivo descargado con éxito en: " + downloadPath);
 
         } catch (IOException e) {
-            System.err.println("\nError al guardar la plantilla. Asegúrate de que la ruta sea válida.");
+            System.err.println("\nError al guardar el archivo. Asegúrate de que la ruta sea válida.");
             e.printStackTrace();
         }
     }

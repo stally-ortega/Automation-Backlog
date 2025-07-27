@@ -18,6 +18,21 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+/**
+ * Clase principal encargada de automatizar la revisión de backlog de servicios
+ * en un sistema web a través de Selenium WebDriver.
+ * 
+ * La automatización permite:
+ * <ul>
+ *   <li>Iniciar sesión en la plataforma.</li>
+ *   <li>Consultar incidentes o peticiones según configuración.</li>
+ *   <li>Extraer información relevante de actividades.</li>
+ *   <li>Exportar los resultados a un archivo Excel.</li>
+ * </ul>
+ * 
+ * Esta clase se apoya en {@link AnalizadorGestiones} para analizar el contenido
+ * textual de las actividades.
+ */
 public class BacklogAutomation {
 	private String url;
 	private String  srcIframe;
@@ -30,7 +45,14 @@ public class BacklogAutomation {
     private WebDriver driver;
     private int waitSeconds;
     private String jsonFilePath;
-
+    
+    /**
+     * Constructor de BacklogAutomation.
+     *
+     * @param driver WebDriver para interactuar con la interfaz web.
+     * @param config Objeto de configuración que contiene URL, credenciales, fechas y servicios.
+     * @param jsonPath Ruta del archivo JSON de entrada, utilizada como base para generar la ruta de salida Excel.
+     */
     public BacklogAutomation(WebDriver driver, Config config, String jsonPath) {
         this.driver = driver;
         this.url = config.url;
@@ -45,6 +67,17 @@ public class BacklogAutomation {
         this.jsonFilePath = jsonPath;
     }
     
+    /**
+     * Ejecuta la automatización completa:
+     * <ul>
+     *   <li>Inicia sesión en el sistema.</li>
+     *   <li>Revisa incidentes o peticiones según los servicios configurados.</li>
+     *   <li>Extrae la información de backlog.</li>
+     *   <li>Guarda los resultados en un archivo Excel.</li>
+     * </ul>
+     *
+     * @return Mensaje de resultado indicando éxito o error.
+     */
     public String run() {
         
         // Abrimos la pagina
@@ -99,6 +132,10 @@ public class BacklogAutomation {
         }
     }
     
+    /**
+     * Revisa los servicios de tipo "IN" (incidentes) cargando los datos desde la interfaz web
+     * y extrayendo información relevante.
+     */
     private void revisarIncidentes() {
 		this.srcIframe = "/especialistas/cwc/nav.menu?name=navStart&id=ROOT%2FGesti%C3%B3n%20de%20incidentes%2FCola%20de%20incidentes";
 		
@@ -150,6 +187,10 @@ public class BacklogAutomation {
 		}
 	}
     
+    /**
+     * Revisa los servicios de tipo "PT" (peticiones) cargando los datos desde la interfaz web
+     * y extrayendo información relevante.
+     */
     private void revisarPeticiones() {
 		this.srcIframe = "/especialistas/cwc/nav.menu?name=navStart&id=ROOT%2FGesti%C3%B3n%20de%20Peticiones%2FCola%20de%20peticiones";
 		
@@ -201,11 +242,22 @@ public class BacklogAutomation {
 		
 	}
 	
+    /**
+     * Espera hasta que un componente esté disponible y retornable mediante su xpath.
+     *
+     * @param xpath Expresión XPath del componente a esperar.
+     * @return WebElement listo para interactuar.
+     */
 	private WebElement waitLoadComponentByXpath(String xpath) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(this.waitSeconds));
 		return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
 	}
 	
+	/**
+     * Escribe los resultados extraídos en un archivo Excel ubicado junto al archivo JSON de entrada.
+     *
+     * @throws IOException si ocurre un error al escribir el archivo.
+     */
 	private void escribirResultadosEnExcel() throws IOException {
         // Obtener la ruta de salida, cambiando la extensión a .xlsx
         File jsonFile = new File(this.jsonFilePath);
@@ -230,7 +282,7 @@ public class BacklogAutomation {
             headerCellStyle.setFont(headerFont);
 
             // Crear la fila de la cabecera (Los nombres de columnas)
-            String[] headers = {"N° incidente", "Dia afectado", "Analista afectado", "Fecha ult. nota", "Ult. nota"};
+            String[] headers = {"N° servicio", "Dia afectado", "Analista afectado", "Fecha ult. nota", "Ult. nota"};
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);

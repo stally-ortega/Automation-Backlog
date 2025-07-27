@@ -4,5 +4,5 @@
   "passw": "TU_CONTRASEÑA_AQUI",
   "fechaInicio": "dd/MM/yy",
   "fechaFin": "dd/MM/yy",
-  "servicios": [ "PT12345", "PT67890" ]
+  "servicios": [ "PTxxxxx", "PTxxxxx", "PTxxxxx" ]
 }
